@@ -1,0 +1,4 @@
+/Users/wangyu/Desktop/利兹上课资料/9月份学期/图形学两门课/5821/作业3/LoopSubdivisionRelease/cmake-build-debug/CMakeFiles/rebuild_cache.dir
+/Users/wangyu/Desktop/利兹上课资料/9月份学期/图形学两门课/5821/作业3/LoopSubdivisionRelease/cmake-build-debug/CMakeFiles/edit_cache.dir
+/Users/wangyu/Desktop/利兹上课资料/9月份学期/图形学两门课/5821/作业3/LoopSubdivisionRelease/cmake-build-debug/CMakeFiles/LoopSubdivisionRelease.dir
+/Users/wangyu/Desktop/利兹上课资料/9月份学期/图形学两门课/5821/作业3/LoopSubdivisionRelease/cmake-build-debug/CMakeFiles/LoopSubdivisionRelease_autogen.dir
