@@ -79,7 +79,10 @@ class RenderController : public QObject
     // slots for responding to check boxes
     void showVerticesCheckChanged(int state);
     void flatNormalsCheckChanged(int state);
-    
+
+    void loopSubDivisionBtnAction();
+    void saveMeshBtnAction();
+
     // slots for responding to widget manipulations
     void MouseDown(int whichButton, int x, int y);
     // note that Continue & End assume the button has already been set

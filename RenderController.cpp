@@ -78,6 +78,11 @@ RenderController::RenderController
     // signal for check box for showing vertices
     QObject::connect(   renderWindow->showVerticesBox, 		        SIGNAL(stateChanged(int)),
                         this,                                       SLOT(showVerticesCheckChanged(int)));
+    QObject::connect(   renderWindow->loopSubButton, 		        SIGNAL(clicked()),
+                            this,                                       SLOT(loopSubDivisionBtnAction()));
+    QObject::connect(   renderWindow->saveButton, 		            SIGNAL(clicked()),
+                            this,                                       SLOT(saveMeshBtnAction()));
+
 
     // copy the rotation matrix from the widgets to the model
     renderParameters->rotationMatrix = renderWindow->modelRotator->RotationMatrix();
@@ -184,7 +189,25 @@ void RenderController::flatNormalsCheckChanged(int state)
     // reset the interface
     renderWindow->ResetInterface();
     } // RenderController::flatNormalsCheckChanged()
-     
+
+void RenderController::loopSubDivisionBtnAction()
+{
+    renderWindow->subFactorLabel->clear();
+
+    static int i = 1;
+    std::string subBy = "subBy: " + std::to_string(int(pow(2,i)));
+    QString q_str = QString::fromStdString(subBy);
+    renderWindow->subFactorLabel->setText(q_str);
+    i++;
+}
+void RenderController::saveMeshBtnAction()
+{
+    QString content = "the file is saved as ******************* ******************* ******************* *******************";
+    QMessageBox::information(NULL,  "Title",  content, QMessageBox::Ok, QMessageBox::Ok);
+
+}
+
+
 // slots for responding to mouse manipulation
 // these are general purpose signals which pass the mouse moves to the controller
 // after scaling to the notional unit sphere

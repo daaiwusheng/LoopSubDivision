@@ -56,6 +56,9 @@ class RenderWindow : public QWidget
     // check boxes for modelling options
     QCheckBox                   *flatNormalsBox;
     QCheckBox                   *showVerticesBox;
+    QPushButton                 *loopSubButton;
+    QLabel                      *subFactorLabel;
+    QPushButton                 *saveButton;
 
     // sliders for spatial manipulation
     QSlider                     *xTranslateSlider;

@@ -61,7 +61,9 @@ RenderWindow::RenderWindow
     // modelling options
 	showVerticesBox				= new QCheckBox					("Show Vertices",		this);
 	flatNormalsBox				= new QCheckBox					("Flat Normals",		this);
-    
+    loopSubButton               = new QPushButton				("loopSubdivision",          this);
+    saveButton                  = new QPushButton				("save new mesh",                this);
+    subFactorLabel              = new QLabel                    ("subBy:",               this);
     // spatial sliders
     xTranslateSlider            = new QSlider                   (Qt::Horizontal,        this);
     yTranslateSlider            = new QSlider                   (Qt::Vertical,          this);
@@ -93,6 +95,9 @@ RenderWindow::RenderWindow
     windowLayout->addWidget(modelRotatorLabel,          3,          3,          1,          1           );
     windowLayout->addWidget(flatNormalsBox,		        4,          3,          1,          1           );
     windowLayout->addWidget(showVerticesBox,	        5,          3,          1,          1           );
+    windowLayout->addWidget(loopSubButton    ,	        6,          3,          1,          1           );
+    windowLayout->addWidget(subFactorLabel    ,	        7,          3,          1,          1           );
+    windowLayout->addWidget(saveButton      ,	        8,          3,          1,          1           );
 
     // Translate Slider Row
     windowLayout->addWidget(xTranslateSlider,           nStacked,   1,          1,          1           );
@@ -101,8 +106,8 @@ RenderWindow::RenderWindow
     windowLayout->addWidget(zoomLabel,                  nStacked,   4,          1,          1           );
     
     // Vertex Size slider row
-    windowLayout->addWidget(vertexSizeSlider,			nStacked+1,	1,			1,			1			);
-    windowLayout->addWidget(vertexSizeLabel,			nStacked+1,	3,			1,			1			);
+    windowLayout->addWidget(vertexSizeSlider,			nStacked+1,	1,			2,			1			);
+    windowLayout->addWidget(vertexSizeLabel,			nStacked+2,	2,			1,			1			);
     
     // now reset all of the control elements to match the render parameters passed in
     ResetInterface();
@@ -148,4 +153,7 @@ void RenderWindow::ResetInterface()
     vertexSizeSlider        ->update();
     showVerticesBox		    ->update();
     flatNormalsBox		    ->update();
+    loopSubButton           ->update();
+    saveButton              ->update();
+    subFactorLabel          ->update();
     } // RenderWindow::ResetInterface()

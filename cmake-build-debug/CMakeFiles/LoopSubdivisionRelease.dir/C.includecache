@@ -6,31 +6,3 @@
 
 #IncludeRegexTransform: 
 
-/Users/wangyu/Desktop/利兹上课资料/9月份学期/图形学两门课/5821/作业3/LoopSubdivisionRelease/src/glad.c
-stdio.h
--
-stdlib.h
--
-string.h
--
-glad.h
--
-windows.h
--
-winapifamily.h
--
-dlfcn.h
--
-
-/usr/local/include/KHR/khrplatform.h
-stdint.h
--
-inttypes.h
--
-stdint.h
--
-
-/usr/local/include/glad/glad.h
-khrplatform.h
--
-
