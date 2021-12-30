@@ -192,17 +192,23 @@ void RenderController::flatNormalsCheckChanged(int state)
 
 void RenderController::loopSubDivisionBtnAction()
 {
-    renderWindow->subFactorLabel->clear();
+    renderWindow->ResetInterface();
+    directedEdgeSurface->loopSubDivision();
 
+    renderWindow->subFactorLabel->clear();
     static int i = 1;
-    std::string subBy = "subBy: " + std::to_string(int(pow(2,i)));
+    int subFactor = int(pow(2,i));
+    directedEdgeSurface->subFactor = subFactor;
+    std::string subBy = "subBy: " + std::to_string(subFactor);
     QString q_str = QString::fromStdString(subBy);
     renderWindow->subFactorLabel->setText(q_str);
+
     i++;
 }
 void RenderController::saveMeshBtnAction()
 {
-    QString content = "the file is saved as ******************* ******************* ******************* *******************";
+    directedEdgeSurface->saveCurrentData();
+    QString content = QString::fromStdString(directedEdgeSurface->newFileName);
     QMessageBox::information(NULL,  "Title",  content, QMessageBox::Ok, QMessageBox::Ok);
 
 }

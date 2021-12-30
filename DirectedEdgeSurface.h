@@ -47,6 +47,9 @@
 class DirectedEdgeSurface
     { // class DirectedEdgeSurface
     public:
+    char *filename; // store the .face filename,
+    int  subFactor; // store the subdivision factor like 2, 4, 8 ....
+    std::string newFileName; // new file name
     // vector of vertices
     std::vector<Cartesian3> vertices;
 
@@ -79,6 +82,16 @@ class DirectedEdgeSurface
 
     // routine to render
     void Render(RenderParameters *renderParameters);
+
+    void loopSubDivision();
+    void saveCurrentData();
+    int getFaceId_opposite_theEdge(int index);
+    int getNextEdge(int index);
+    int getPreviousEdge(int index);
+    Cartesian3& getVertexCoor(int32_t index);
+    Cartesian3 adjustOldVertexCoor(int vertexId);
+    void generateDirectedEdge();
+    std::string generateNewFileName();
 
     }; // class DirectedEdgeSurface
 

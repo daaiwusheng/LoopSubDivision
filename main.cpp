@@ -48,7 +48,7 @@ int main(int argc, char **argv)
 
     // open the input files for the geometry & texture
     std::ifstream geometryFile(argv[1]);
-
+    DirectedEdgeSurface.filename = argv[1];
     // try reading it
     if (!(geometryFile.good()) || (!DirectedEdgeSurface.ReadObjectStream(geometryFile)))
         { // object read failed 

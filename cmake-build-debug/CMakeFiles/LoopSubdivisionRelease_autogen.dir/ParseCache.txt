@@ -890,8 +890,8 @@
 /Users/wangyu/Desktop/利兹上课资料/9月份学期/图形学两门课/5821/作业3/LoopSubdivisionRelease/RenderWindow.cpp
 /Users/wangyu/Desktop/利兹上课资料/9月份学期/图形学两门课/5821/作业3/LoopSubdivisionRelease/SphereVertices.cpp
 /Users/wangyu/Desktop/利兹上课资料/9月份学期/图形学两门课/5821/作业3/LoopSubdivisionRelease/Homogeneous4.h
-/Users/wangyu/Desktop/利兹上课资料/9月份学期/图形学两门课/5821/作业3/LoopSubdivisionRelease/ArcBallWidget.cpp
 /Users/wangyu/Desktop/利兹上课资料/9月份学期/图形学两门课/5821/作业3/LoopSubdivisionRelease/RGBAImage.h
 /Users/wangyu/Desktop/利兹上课资料/9月份学期/图形学两门课/5821/作业3/LoopSubdivisionRelease/ArcBall.h
+/Users/wangyu/Desktop/利兹上课资料/9月份学期/图形学两门课/5821/作业3/LoopSubdivisionRelease/ArcBallWidget.cpp
 /Users/wangyu/Desktop/利兹上课资料/9月份学期/图形学两门课/5821/作业3/LoopSubdivisionRelease/RenderWindow.h
 /Users/wangyu/Desktop/利兹上课资料/9月份学期/图形学两门课/5821/作业3/LoopSubdivisionRelease/RenderController.cpp
