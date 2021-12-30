@@ -398,16 +398,15 @@ void DirectedEdgeSurface::loopSubDivision()
             if (edgesHaveNewVertex[b_index] == NOT_FOUND && edgesHaveNewVertex[b_other_half_edge] == NOT_FOUND)
             {
                 //如果这条边,没有生成过新的定点,那么生成新的定点
-
                 int d_index = getNextEdge(b_other_half_edge);
 //            int d_index = getFaceId_opposite_theEdge(b_index) * 3 + (getNextEdge(b_other_half_edge) % 3);
 
-                Cartesian3 vertex_d_coor;
+                Cartesian3 new_vertex_on_d_coor;
                 //vertex d 的坐标
-                vertex_d_coor = 0.375f * (getVertexCoor(a_index) + getVertexCoor(b_index))
-                                + 0.125 * (getVertexCoor(c_index) + getVertexCoor(d_index));
+                new_vertex_on_d_coor = 0.375f * (getVertexCoor(a_index) + getVertexCoor(b_index))
+                                       + 0.125 * (getVertexCoor(c_index) + getVertexCoor(d_index));
 
-                vertices.push_back(vertex_d_coor);
+                vertices.push_back(new_vertex_on_d_coor);
                 //一对边都得存一下 插入点的索引,她们公用同一个点
                 int newVertexIndex = vertices.size() - 1;
                 edgesHaveNewVertex[b_index] = newVertexIndex;
@@ -416,9 +415,21 @@ void DirectedEdgeSurface::loopSubDivision()
                 faceVertices.push_back(newVertexIndex);
 
             }//if (edgesHaveNewVertex[b_index] != NOT_FOUND && edgesHaveNewVertex[b_other_half_edge] != NOT_FOUND)
-            else {
+            else
+            {
                 //如果这条边已经生成新的定点了,
                 int newVertexIndex = edgesHaveNewVertex[b_index];
+                if (newVertexIndex == NOT_FOUND)
+                {
+                    newVertexIndex = edgesHaveNewVertex[b_other_half_edge];
+                    edgesHaveNewVertex[b_index] = newVertexIndex;
+                }
+
+                if (edgesHaveNewVertex[b_other_half_edge] == NOT_FOUND)
+                {
+                    edgesHaveNewVertex[b_other_half_edge] = newVertexIndex;
+                }
+
                 newCenterFaces.push_back(newVertexIndex);
                 faceVertices.push_back(newVertexIndex);
             }
@@ -426,7 +437,7 @@ void DirectedEdgeSurface::loopSubDivision()
             {
                 faceVertices.push_back(faceVertices[faceVertices.size()-1]);
             }
-            faceVertices.push_back(b_index);
+            faceVertices.push_back(faceVertices[b_index]);
             if (i==2){
                 //当前三角形的最后一次,要补充最后一个三角形的定点,在构造新的三角形的时候,不然会少一个顶点
                 faceVertices.push_back(edgesHaveNewVertex[c_index]);
@@ -438,8 +449,12 @@ void DirectedEdgeSurface::loopSubDivision()
 
     }//for (int face_id = 0; face_id < oldFaceVerticesLength; face_id += 3)
     //接下来,更新所有的 老顶点的坐标
+    std::vector<Cartesian3> updateVertices;
     for (int i = 0; i < oldVerticesNum; ++i) {
-        vertices[i] = adjustOldVertexCoor(i);
+        updateVertices.push_back(adjustOldVertexCoor(i));
+    }
+    for (int i = 0; i < oldVerticesNum; ++i) {
+        vertices[i] = updateVertices[i];
     }
     //更新old face 的顶点索引
     for (int i = 0; i < oldFaceVerticesLength; ++i) {
@@ -510,7 +525,7 @@ Cartesian3 DirectedEdgeSurface::adjustOldVertexCoor(int vertexId)
     const static float coefficient_2 = 1.0/4.0;
 
     Cartesian3 sum = {0,0,0};
-    int32_t n = 0;
+    int n = 0;
 
     //find all old directly connected vertexes
     int edgeId = firstDirectedEdge[vertexId];

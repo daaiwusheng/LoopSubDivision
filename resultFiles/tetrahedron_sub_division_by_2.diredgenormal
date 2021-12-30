@@ -21,7 +21,7 @@ Normal 3 -0.5774 -0.5774 0.5774
 FirstDirectedEdge 0 18
 FirstDirectedEdge 1 12
 FirstDirectedEdge 2 15
-FirstDirectedEdge 3 27
+FirstDirectedEdge 3 24
 FirstDirectedEdge 4 2
 FirstDirectedEdge 5 0
 FirstDirectedEdge 6 1
@@ -35,60 +35,60 @@ Face 9 7 5 9
 Face 12 4 1 5
 Face 15 5 2 6
 Face 18 6 0 4
-Face 21 6 4 7
-Face 24 7 5 8
-Face 27 8 3 6
-Face 30 8 7 9
-Face 33 9 8 4
-Face 36 4 6 8
-Face 39 7 10 5
-Face 42 5 11 9
-Face 45 9 9 7
-OtherHalf 0 37
+Face 21 6 2 7
+Face 24 7 3 8
+Face 27 8 0 6
+Face 30 8 3 9
+Face 33 9 1 4
+Face 36 4 0 8
+Face 39 7 2 5
+Face 42 5 1 9
+Face 45 9 3 7
+OtherHalf 0 18
 OtherHalf 1 12
 OtherHalf 2 15
-OtherHalf 3 38
+OtherHalf 3 27
 OtherHalf 4 21
-OtherHalf 5 31
+OtherHalf 5 24
 OtherHalf 6 36
-OtherHalf 7 34
+OtherHalf 7 30
 OtherHalf 8 33
 OtherHalf 9 45
 OtherHalf 10 39
 OtherHalf 11 42
 OtherHalf 12 1
-OtherHalf 13 4294967295
-OtherHalf 14 4294967295
+OtherHalf 13 35
+OtherHalf 14 43
 OtherHalf 15 2
-OtherHalf 16 4294967295
-OtherHalf 17 4294967295
+OtherHalf 16 41
+OtherHalf 17 22
 OtherHalf 18 0
-OtherHalf 19 4294967295
-OtherHalf 20 4294967295
+OtherHalf 19 29
+OtherHalf 20 37
 OtherHalf 21 4
-OtherHalf 22 37
-OtherHalf 23 4294967295
+OtherHalf 22 17
+OtherHalf 23 40
 OtherHalf 24 5
-OtherHalf 25 39
-OtherHalf 26 4294967295
+OtherHalf 25 47
+OtherHalf 26 31
 OtherHalf 27 3
-OtherHalf 28 4294967295
-OtherHalf 29 4294967295
+OtherHalf 28 38
+OtherHalf 29 19
 OtherHalf 30 7
-OtherHalf 31 5
-OtherHalf 32 9
+OtherHalf 31 26
+OtherHalf 32 46
 OtherHalf 33 8
-OtherHalf 34 7
-OtherHalf 35 6
+OtherHalf 34 44
+OtherHalf 35 13
 OtherHalf 36 6
-OtherHalf 37 22
-OtherHalf 38 3
-OtherHalf 39 25
-OtherHalf 40 4294967295
-OtherHalf 41 4294967295
+OtherHalf 37 20
+OtherHalf 38 28
+OtherHalf 39 10
+OtherHalf 40 23
+OtherHalf 41 16
 OtherHalf 42 11
-OtherHalf 43 4294967295
-OtherHalf 44 4294967295
+OtherHalf 43 14
+OtherHalf 44 34
 OtherHalf 45 9
-OtherHalf 46 4294967295
-OtherHalf 47 4294967295
+OtherHalf 46 32
+OtherHalf 47 25
