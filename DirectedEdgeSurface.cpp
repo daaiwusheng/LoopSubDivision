@@ -33,6 +33,7 @@
 #include <sstream>
 #include <fstream>
 #include <string>
+#include "string.h"
 #include <cmath>
 #include <unistd.h>
 #include <sys/stat.h>
