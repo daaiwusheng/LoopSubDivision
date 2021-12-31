@@ -91,6 +91,7 @@ class DirectedEdgeSurface
     Cartesian3& getVertexCoor(int32_t index);
     Cartesian3 adjustOldVertexCoor(int vertexId);
     void generateDirectedEdge();
+    void generateNewNormals();
     std::string generateNewFileName();
 
     }; // class DirectedEdgeSurface

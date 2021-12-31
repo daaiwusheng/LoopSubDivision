@@ -244,7 +244,7 @@ void DirectedEdgeSurface::WriteObjectStream(std::ostream &geometryStream)
     // and the faces - increment is taken care of internally
     for (unsigned int face = 0; face < faceVertices.size(); )
         { // per face
-        geometryStream << "Face " << face << " ";
+        geometryStream << "Face " << face/3 << " ";
         
         // read in three vertices
         geometryStream << faceVertices[face++] << " ";
@@ -355,16 +355,18 @@ void DirectedEdgeSurface::Render(RenderParameters *renderParameters)
     
     } // Render()
 
-// 提纲
-// 1,首先 记录 现在的 vertex 数组 size, 因为新产生的定点要直接追加到当前定点数组后面, 所以要知道老 定点究竟是那些
-//   对于 normal  firstdirectededge face otherhalf 也是这样记录
-// 2, 按 faces 数组进行遍历, 开始生成新的定点,每个边一个新的定点,
-//    但是会有的边会重复计算新的定点, 这里用一个新的数据结构去记录一下已经产生过新的定点的边,后面遇到已经标记过的,就跳过去不用重新计算,
-//    但是 这个定点要被的索引要被追加到new face 索引表中
-// 3, 新生成的定点,直接追加到定点数组后面, 而这些新加入的定点,
-//    此时有三个变化了的数组, face, vertex, new face
-// 4, 然后按 face中old部分 调整每个老定点的坐标, 并且更新 vertex, 还有face 数组中老 face的定点索引
-// 5, 重新计算otherhalf, first directed edge, normal
+// the outline of my strategy: ( I use method 3 taught in our last lab )
+// 1.generate a new vertex from every old edge;
+//   append the new vertex coordinates to the vector vertices;
+//   append the new faces vertex indexes to the vector faceVertices, here, we just append
+//   the new faces which have 2 new vertexes and 1 old vertex, in other words, they are not
+//   the center new triangles;
+//   store center new faces that are formed by three new vertexes in a new vector called
+//   newCenterFaces;
+// 2.update all of the old vertexes coordinates;
+// 3.update all old face vertex indexes;
+// 4.generate new first directed edge data;
+// 5.generate new normals, which is nor required but I tried.
 
 //          c
 //       /    \
@@ -374,50 +376,65 @@ void DirectedEdgeSurface::Render(RenderParameters *renderParameters)
 //      \      /
 //        \  /
 //         d
-
-
-
+/***
+ * the core function of processing loop subdivision
+ */
 void DirectedEdgeSurface::loopSubDivision()
 {
+    //as we need to know which vertexes are old ones, so we
+    //store the number of old vertexes. like a milestone.
     int oldVerticesNum = vertices.size();
+    //so does the number of old faces.
     int oldFacesNum = faceVertices.size() / 3;
-
+    //so does the number of old face vertex.
     int oldFaceVerticesLength = faceVertices.size();
+    //we store all faces fromed by 3 new vertexes, the center face, in the newCenterFaces.
     std::vector<int > newCenterFaces;
+    //when we traverse the half edges to create new vertexes,
+    //we may find a pair of half edges, but they just have the same new vertex,
+    //so we need to know if an edge has created a new vertex, its half edge does not
+    //need to create a new vertex. Hence, we use edgesHaveNewVertex to tag if an edge already
+    //has a new vertex. Besides, we also store the index to an edge and its half.
     std::vector<int> edgesHaveNewVertex;
     edgesHaveNewVertex.resize(otherHalf.size(),NOT_FOUND);
 
+    //via this loop we can calculate all new vertexes.
     for (int face_id = 0; face_id < oldFacesNum; face_id++) {
         for (int i = 0; i < 3; ++i) {
-            //inside a face, 这里面三个索引也是对应边的索引
+            //inside a face, we need to check and calculate the new vertexes of 3 edges.
+            //just like a circle.
+            //here we generate the new vertex on the edge a-b, so
+            //we also find vertex d which is the opposite one of c vertex.
+            //a and b have 3/8 weight; c and d have 1/8 weight.
             int a_index = face_id * 3 + i % 3;
             int b_index = face_id * 3 + (i + 1) % 3;
             int c_index = face_id * 3 + (i + 2) % 3;
 
             int b_other_half_edge = otherHalf[b_index];
+            //if the edge a-b has already created a new vertex, wo need to jump over it.
             if (edgesHaveNewVertex[b_index] == NOT_FOUND && edgesHaveNewVertex[b_other_half_edge] == NOT_FOUND)
             {
-                //如果这条边,没有生成过新的定点,那么生成新的定点
+                //d vertex index is always the next one of b's other half edge.
                 int d_index = getNextEdge(b_other_half_edge);
-//            int d_index = getFaceId_opposite_theEdge(b_index) * 3 + (getNextEdge(b_other_half_edge) % 3);
-
                 Cartesian3 new_vertex_on_d_coor;
-                //vertex d 的坐标
+                //calculate the new vertex's coordinates.
                 new_vertex_on_d_coor = 0.375f * (getVertexCoor(a_index) + getVertexCoor(b_index))
                                        + 0.125 * (getVertexCoor(c_index) + getVertexCoor(d_index));
-
+                //push it directly to the vector vertices. as we know that which are old ones.
                 vertices.push_back(new_vertex_on_d_coor);
-                //一对边都得存一下 插入点的索引,她们公用同一个点
                 int newVertexIndex = vertices.size() - 1;
+                //remember which edges have already created the new vertex.
                 edgesHaveNewVertex[b_index] = newVertexIndex;
                 edgesHaveNewVertex[b_other_half_edge] = newVertexIndex;
+                //every new vertex is need to store in newCenterFaces, and later we will use it to update old faces.
                 newCenterFaces.push_back(newVertexIndex);
+                //2 new vertexes and 1 old vertex we need to append them to faceVertices.
                 faceVertices.push_back(newVertexIndex);
 
             }//if (edgesHaveNewVertex[b_index] != NOT_FOUND && edgesHaveNewVertex[b_other_half_edge] != NOT_FOUND)
             else
             {
-                //如果这条边已经生成新的定点了,
+                //the two if statements below are just a guarantee
                 int newVertexIndex = edgesHaveNewVertex[b_index];
                 if (newVertexIndex == NOT_FOUND)
                 {
@@ -429,42 +446,49 @@ void DirectedEdgeSurface::loopSubDivision()
                 {
                     edgesHaveNewVertex[b_other_half_edge] = newVertexIndex;
                 }
-
+                //every new vertex is need to store in newCenterFaces, and later we will use it to update old faces.
                 newCenterFaces.push_back(newVertexIndex);
+                //2 new vertexes and 1 old vertex we need to append them to faceVertices.
                 faceVertices.push_back(newVertexIndex);
             }
             if (faceVertices.size() % 3 == 0)
             {
+                //as every two triangles have one connected vertex,
+                //so when we finish form a triangle we need to push the last vertex again.
                 faceVertices.push_back(faceVertices[faceVertices.size()-1]);
             }
+            //2 new vertexes and 1 old vertex we need to append them to faceVertices.
             faceVertices.push_back(faceVertices[b_index]);
-            if (i==2){
-                //当前三角形的最后一次,要补充最后一个三角形的定点,在构造新的三角形的时候,不然会少一个顶点
+            if (i==2)
+            {
+                //without this, the last new triangle will miss the last vertex.
                 faceVertices.push_back(edgesHaveNewVertex[c_index]);
             }
-        //到这里,就搞定了每个三角形中插入新的顶点,并且构造了新的face,全部新顶点的一个,另外三个,
         }//for (int i = 0; i < 3; ++i)
 
-
-
     }//for (int face_id = 0; face_id < oldFaceVerticesLength; face_id += 3)
-    //接下来,更新所有的 老顶点的坐标
+    //calculate all old vertexes' new coordinates.
     std::vector<Cartesian3> updateVertices;
     for (int i = 0; i < oldVerticesNum; ++i) {
         updateVertices.push_back(adjustOldVertexCoor(i));
     }
+    //update all old vertex coordinates with new coordinates.
     for (int i = 0; i < oldVerticesNum; ++i) {
         vertices[i] = updateVertices[i];
     }
-    //更新old face 的顶点索引
+    //update new center face vertexes to faceVertices.
     for (int i = 0; i < oldFaceVerticesLength; ++i) {
         faceVertices[i] = newCenterFaces[i];
     }
-    //最后一步,生成 directed edge
+    //the last step, generating the new data of directed edges.
     generateDirectedEdge();
+    //the optional step, calculating new normals
+    generateNewNormals();
 }
 
-
+/***
+ * this function shoulders generating new data of directed edges
+ */
 void DirectedEdgeSurface::generateDirectedEdge()
 {
     //clear the old data, as we need to generate all new first directed edges and other half edges.
@@ -479,17 +503,21 @@ void DirectedEdgeSurface::generateDirectedEdge()
     {
         int faceId = edgeId / 3;
         //from ------> end
-        //遵循和 当前文件一样的规则, 以 end 顶点索引为 edge索引
+        //follow the rule of the provided files' directed edge.
+        //the first directed edge follow the end vertex, not from one.
         int endVertex = faceVertices[edgeId];
         int fromVertex = faceVertices[getPreviousEdge(edgeId)];
 
         if(fromVertex != endVertex)
         {
-            if(firstDirectedEdge[endVertex] == NOT_FOUND){
-                firstDirectedEdge[endVertex] = getPreviousEdge(edgeId);
+            if(firstDirectedEdge[fromVertex] == NOT_FOUND){
+                //the current edge id is belonging to the the from vertex.
+                firstDirectedEdge[fromVertex] = edgeId;
             }
 
             if(otherHalf[edgeId] == NOT_FOUND){
+                //when we look for the other half edge, we just need check the later triangles.
+                //as previous have done that and other half won't appear in the current triangle.
                 for(int nextCandidateEdgeId = 3 * (faceId + 1); nextCandidateEdgeId < currentFaceVerticesLength; nextCandidateEdgeId++)
                 {
                     int nextEndVertex = faceVertices[nextCandidateEdgeId];
@@ -505,7 +533,11 @@ void DirectedEdgeSurface::generateDirectedEdge()
         }//if(fromVertex != endVertex)
     }//for(int edgeId = 0;edgeId < currentFaceVerticesLength;edgeId++)
 }
-
+/***
+ * adjust the old vertex coordinates
+ * @param vertexId is vertex index
+ * @return adjusted coordinates
+ */
 Cartesian3 DirectedEdgeSurface::adjustOldVertexCoor(int vertexId)
 {
 //      c    b
@@ -519,6 +551,8 @@ Cartesian3 DirectedEdgeSurface::adjustOldVertexCoor(int vertexId)
 //      e     f
 // n is the degree of a
 // a = 1/n[5/8 - (3/8 + 1/4 * cos(2pi/n)) ^2]
+// another formula is : if n==3, the weight is 3.0/16.0, otherwise is 3.0/(8.0*n);
+// so I choose to use the later one, which is simpler. I have checked that, they work equally.
 
     const static float coefficient_0 = 5.0/8.0;
     const static float coefficient_1 = 3.0/8.0;
@@ -537,37 +571,47 @@ Cartesian3 DirectedEdgeSurface::adjustOldVertexCoor(int vertexId)
         n++;
     }
     while (edgeId != firstDirectedEdge[vertexId]);
-
+    float weight = 3.0/16.0;
+    if (n != 3)
+    {
+        weight = 3.0/(8.0*n);
+    }
     //calculate the weight of the formula
-    float weight = (1.0 / n * (coefficient_0 - std::pow(coefficient_1 + coefficient_2 * std::cos((2 * M_PI) / n), 2)));
+//  float weight = (1.0 / n * (coefficient_0 - std::pow(coefficient_1 + coefficient_2 * std::cos((2 * M_PI) / n), 2)));
     return vertices[vertexId] * (float)(1 - n * weight) + sum * weight;
 }
 
-//index : the edge id
+/***
+ * get the face id of the current edge's other half edge
+ * @param index, the current edge's index
+ * @return a face id
+ */
 int DirectedEdgeSurface::getFaceId_opposite_theEdge(int index)
 {
-    //当前edge 的 other half edge的 所在的face id
     return otherHalf[index]/3;
 }
 
 int DirectedEdgeSurface::getNextEdge(int index)
 {
-    //每个三角形内,第三条边的id是大于第一条的,所以减去2,此时构成一个环,又回去了
+    //easy one, get the next edge inside a triangle.
     return (index % 3) == 2 ? index - 2 : index + 1;
 }
 
 int DirectedEdgeSurface::getPreviousEdge(int index)
 {
-    //和next edge一个道理
+    //easy one, get the previous edge inside a triangle.
     return (index % 3) != 0 ? index - 1 : index + 2;
 }
 
 Cartesian3& DirectedEdgeSurface::getVertexCoor(int32_t index)
 {
+    //just get the vertex coordinates
     return vertices[faceVertices[index]];
 }
 
-//save file
+/***
+ * save the file
+ */
 void DirectedEdgeSurface::saveCurrentData()
 {
     string newFileName = generateNewFileName();
@@ -576,11 +620,41 @@ void DirectedEdgeSurface::saveCurrentData()
     WriteObjectStream(out);
     out.close();
 }
+/***
+ * generate new normals
+ */
+void DirectedEdgeSurface::generateNewNormals()
+{
+    normals.resize(vertices.size(),Cartesian3());
+    for (int i = 0; i < faceVertices.size(); i+=3)
+    {
+        int a_index = faceVertices[i];
+        int b_index = faceVertices[i+1];
+        int c_index = faceVertices[i+2];
 
+        Cartesian3 normal = (vertices[b_index] - vertices[a_index]).cross((vertices[c_index]-vertices[a_index]));
+        normals[a_index] =  normals[a_index] = normal;
+        normals[b_index] =  normals[b_index] = normal;
+        normals[c_index] =  normals[c_index] = normal;
+    }
+
+    for (int i = 0; i < normals.size(); ++i) {
+        Cartesian3 currentNormal = normals[i];
+        float length = sqrt(currentNormal.x * currentNormal.x + currentNormal.y*currentNormal.y + currentNormal.z*currentNormal.z);
+        if (length == 0.0)
+        {
+            length = 1.0;
+        }
+        normals[i] = currentNormal / length;
+    }
+
+}
 
 /*!
- * generate the new file name for texture.ppm and normalMap.ppm file
- * @return ResultFileNames, a struct
+ * generate the new file name
+ * @return the name of new file.
+ * the form of new file name is tetrahedron_sub_division_by_2.diredgenormal,
+ * by_2 means the file is divided by 2 , if 4 means by divided by 4 compared to the original file.
  */
 std::string DirectedEdgeSurface::generateNewFileName()
 {
