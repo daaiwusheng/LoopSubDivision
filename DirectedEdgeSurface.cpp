@@ -672,6 +672,6 @@ std::string DirectedEdgeSurface::generateNewFileName()
         mkdir(newFileDir.c_str(), 0777);
     }
 
-    newFileName = newFileDir + objName + "_sub_division_by_" + std::to_string(this->subFactor) + newFileSuffix;
+    newFileName = newFileDir + objName + "_sub_division_by_time_" + std::to_string(this->subFactor) + newFileSuffix;
     return newFileName;
 }

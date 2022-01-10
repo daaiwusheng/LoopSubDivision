@@ -197,9 +197,9 @@ void RenderController::loopSubDivisionBtnAction()
 
     renderWindow->subFactorLabel->clear();
     static int i = 1;
-    int subFactor = int(pow(2,i));
+    int subFactor = i;
     directedEdgeSurface->subFactor = subFactor;
-    std::string subBy = "subBy: " + std::to_string(subFactor);
+    std::string subBy = "subBy: " + std::to_string(subFactor) +" time";
     QString q_str = QString::fromStdString(subBy);
     renderWindow->subFactorLabel->setText(q_str);
 
